@@ -20,4 +20,4 @@ ENV/
 # Test files
 test_output.json
 test_input.json 
-test.rdt
+test*.rdt
