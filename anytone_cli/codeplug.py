@@ -142,7 +142,10 @@ def display_info(filename):
         print(f"Channels:       {info['channels']}")
         print(f"Zones:          {info['zones']}")
         print(f"Contacts:       {info['contacts']}")
-        print(f"Radio IDs:      {', '.join(str(id) for id in info['radio_ids'])}")
+        # Display radio IDs as a numbered list, one per line
+        print(f"Radio IDs:")
+        for i, radio_id in enumerate(info['radio_ids'], 1):
+            print(f"  {i}. {radio_id}")
         
     except CodeplugError as e:
         print(f"Error: {str(e)}", file=sys.stderr) 
