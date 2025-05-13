@@ -156,3 +156,65 @@ func (cp *Codeplug) UpdateRadioID(index int, newID int) error {
 
 	return cp.writeRadioIDEntry(newEntry)
 }
+
+func (cp *Codeplug) GetRadioIDs() ([]*RadioIDEntry, error) {
+	radioIDOffset, err := cp.calculateRadioIDOffset()
+	if err != nil {
+		return nil, fmt.Errorf("failed to calculate radio ID offset: %w", err)
+	}
+
+	var currentOffset int64 = radioIDOffset
+	previousIndex := -1
+	entries := make([]*RadioIDEntry, 0, maxRadioIDs)
+
+	for i := 0; i < maxRadioIDs; i++ {
+		entry, err := cp.readRadioIDEntry(currentOffset, previousIndex)
+		if err != nil {
+			return nil, err
+		}
+
+		if entry == nil {
+			break
+		}
+
+		entries = append(entries, entry)
+		previousIndex = entry.Index
+		currentOffset += int64(entry.Length)
+	}
+
+	return entries, nil
+}
+
+func (cp *Codeplug) GetRadioIDByIndex(index int) (*RadioIDEntry, error) {
+	if index < 0 || index >= maxRadioIDs {
+		return nil, fmt.Errorf("invalid radio ID index: %d", index)
+	}
+
+	radioIDOffset, err := cp.calculateRadioIDOffset()
+	if err != nil {
+		return nil, fmt.Errorf("failed to calculate radio ID offset: %w", err)
+	}
+
+	var currentOffset int64 = radioIDOffset
+	previousIndex := -1
+
+	for i := 0; i < maxRadioIDs; i++ {
+		entry, err := cp.readRadioIDEntry(currentOffset, previousIndex)
+		if err != nil {
+			return nil, err
+		}
+
+		if entry == nil {
+			break
+		}
+
+		if entry.Index == index {
+			return entry, nil
+		}
+
+		previousIndex = entry.Index
+		currentOffset += int64(entry.Length)
+	}
+
+	return nil, fmt.Errorf("radio ID with index %d not found", index)
+}

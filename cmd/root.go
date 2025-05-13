@@ -36,7 +36,7 @@ func Execute() error {
 }
 
 func isCommand(cmd string) bool {
-	commands := []string{"help", "completion", "info", "set"}
+	commands := []string{"help", "completion", "info", "set", "get"}
 	for _, c := range commands {
 		if c == cmd {
 			return true
@@ -48,4 +48,5 @@ func isCommand(cmd string) bool {
 func init() {
 	rootCmd.AddCommand(infoCmd)
 	rootCmd.AddCommand(setRadioCmd)
+	rootCmd.AddCommand(getCmd)
 }

@@ -53,36 +53,21 @@ func (cp *Codeplug) GetInfo() (*Info, error) {
 		return nil, fmt.Errorf("failed to read model: %w", err)
 	}
 
-	radioIDOffset, err := cp.calculateRadioIDOffset()
+	radioIDs, err := cp.GetRadioIDs()
 	if err != nil {
-		return nil, fmt.Errorf("failed to calculate radio ID offset: %w", err)
+		return nil, fmt.Errorf("failed to get radio IDs: %w", err)
 	}
 
-	radioIDs := make([]int, 0, maxRadioIDs)
-	radioIDIndices := make([]int, 0, maxRadioIDs)
-
-	var currentOffset int64 = radioIDOffset
-	previousIndex := -1
-
-	for i := 0; i < maxRadioIDs; i++ {
-		entry, err := cp.readRadioIDEntry(currentOffset, previousIndex)
-		if err != nil {
-			return nil, err
-		}
-
-		if entry == nil {
-			break
-		}
-
-		radioIDs = append(radioIDs, entry.ID)
-		radioIDIndices = append(radioIDIndices, entry.Index)
-		previousIndex = entry.Index
-		currentOffset += int64(entry.Length)
+	ids := make([]int, len(radioIDs))
+	indices := make([]int, len(radioIDs))
+	for i, entry := range radioIDs {
+		ids[i] = entry.ID
+		indices[i] = entry.Index
 	}
 
 	return &Info{
 		Model:          string(model),
-		RadioIDs:       radioIDs,
-		RadioIDIndices: radioIDIndices,
+		RadioIDs:       ids,
+		RadioIDIndices: indices,
 	}, nil
 }
