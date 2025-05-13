@@ -1,6 +1,6 @@
 # Anytone CLI
 
-A proof-of-concept command-line interface (CLI) for working with Anytone codeplugs. This tool allows you to view and modify parameters in Anytone radio codeplug (.rdt) files without using the official CPS software.
+A command-line interface (CLI) for working with Anytone codeplugs. This tool allows you to view and modify parameters in Anytone radio codeplug (.rdt) files without using the official CPS software.
 
 > [!WARNING]
 > This is a work-in-progress and not suitable for production use. Contributions are welcome. Use at your own risk.
@@ -15,20 +15,14 @@ A proof-of-concept command-line interface (CLI) for working with Anytone codeplu
 
 ### Prerequisites
 
-- Python 3.6 or higher
-
-### From PyPI
-
-```bash
-pip install anytone-cli
-```
+- Go 1.21 or higher
 
 ### From Source
 
 ```bash
 git clone https://github.com/emerson000/anytone-cli.git
 cd anytone-cli
-pip install -e .
+go install
 ```
 
 ## Usage
@@ -53,12 +47,12 @@ This displays general information about your codeplug file, including:
 #### Update Radio ID
 
 ```bash
-anytone-cli codeplug.rdt update radio_id <index> <new_id>
+anytone-cli codeplug.rdt set radio_id <index> <new_id>
 ```
 
 Example:
 ```bash
-anytone-cli codeplug.rdt update radio_id 0 3161234
+anytone-cli codeplug.rdt set radio_id 0 3161234
 ```
 
 This updates the first radio ID (index 0) to 3161234.
@@ -72,7 +66,7 @@ anytone-cli my_radio.rdt info
 
 To update the second radio ID:
 ```bash
-anytone-cli my_radio.rdt update radio_id 1 3165678
+anytone-cli my_radio.rdt set radio_id 1 3165678
 ```
 
 ## License

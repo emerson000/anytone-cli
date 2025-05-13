@@ -1,23 +1,28 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
+# Test binary, built with `go test -c`
+*.test
 
-# Virtual environments
-venv/
-env/
-ENV/
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
+.env
 
 # IDE files
 .idea/
-.vscode/
+.vscode/*
+!.vscode/launch.json
 
 # Test files
-test_output.json
-test_input.json 
+test*.json
 test*.rdt
