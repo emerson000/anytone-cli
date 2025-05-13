@@ -131,3 +131,51 @@ func (cp *Codeplug) readChannelMetadata(offset int64) (*Channel, error) {
 
 	return channel, nil
 }
+
+func (cp *Codeplug) GetChannels() ([]*Channel, error) {
+	channelCountBuf := make([]byte, 1)
+	if _, err := cp.file.ReadAt(channelCountBuf, totalChannelsAddress); err != nil {
+		return nil, fmt.Errorf("failed to read total channels: %w", err)
+	}
+
+	totalChannels := int(channelCountBuf[0])
+	channelsStartOffset := int64(totalChannelsAddress + 1)
+	currentOffset := channelsStartOffset
+	channels := make([]*Channel, 0, totalChannels)
+
+	for i := 0; i < totalChannels; i++ {
+		channel, err := cp.readChannelMetadata(currentOffset)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read channel %d: %w", i+1, err)
+		}
+		channels = append(channels, channel)
+		currentOffset += int64(channel.TotalLength)
+	}
+
+	return channels, nil
+}
+
+func (cp *Codeplug) GetChannelByIndex(index int) (*Channel, error) {
+	channelCountBuf := make([]byte, 1)
+	if _, err := cp.file.ReadAt(channelCountBuf, totalChannelsAddress); err != nil {
+		return nil, fmt.Errorf("failed to read total channels: %w", err)
+	}
+
+	totalChannels := int(channelCountBuf[0])
+	if index < 0 || index >= totalChannels {
+		return nil, fmt.Errorf("invalid channel index: %d", index)
+	}
+
+	channelsStartOffset := int64(totalChannelsAddress + 1)
+	currentOffset := channelsStartOffset
+
+	for i := 0; i < index; i++ {
+		channel, err := cp.readChannelMetadata(currentOffset)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read channel %d: %w", i+1, err)
+		}
+		currentOffset += int64(channel.TotalLength)
+	}
+
+	return cp.readChannelMetadata(currentOffset)
+}
